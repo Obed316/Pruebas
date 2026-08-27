@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro v9.1 - Corregida</title>
+    <title>Heladería POS v9.2 - Estable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -18,7 +18,7 @@
 <body class="p-4 pb-28 text-gray-800">
     <div class="max-w-md mx-auto">
         <header class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black tracking-tight text-gray-900">Heladería 🍦</h1>
+            <h1 class="text-2xl font-black tracking-tight">Heladería 🍦</h1>
             <div class="flex gap-2">
                 <button onclick="abrirGastos()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">💸</button>
                 <button onclick="abrirHistorialDias()" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">📅</button>
@@ -31,14 +31,8 @@
         <div class="apple-card p-8 mb-6 text-center border-b-4 border-blue-500">
             <span class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] block mb-2">Total de la Venta</span>
             <div id="displayTotal" class="text-6xl font-black my-2 text-gray-900 tracking-tighter">$0.00</div>
-            <div id="displayLista" class="text-gray-400 text-xs font-medium h-4 truncate italic tracking-tight">Carrito vacío...</div>
+            <div id="displayLista" class="text-gray-400 text-xs font-medium h-4 truncate italic">Caja lista...</div>
             
-            <div class="flex justify-center gap-2 mt-6">
-                <button onclick="aplicarDescuento(0)" class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-full font-bold">Normal</button>
-                <button onclick="aplicarDescuento(5)" class="text-[10px] bg-gray-100 text-gray-400 px-3 py-1.5 rounded-full font-bold">-5%</button>
-                <button onclick="aplicarDescuento(10)" class="text-[10px] bg-gray-100 text-gray-400 px-3 py-1.5 rounded-full font-bold">-10%</button>
-            </div>
-
             <div class="grid grid-cols-2 gap-4 mt-6">
                 <button onclick="abrirPago()" class="bg-green-500 text-white font-black py-5 rounded-[20px] btn-press text-lg uppercase tracking-widest">Cobrar</button>
                 <button onclick="borrarUltimo()" class="bg-gray-100 text-gray-500 font-bold py-5 rounded-[20px] btn-press text-2xl">←</button>
@@ -48,24 +42,24 @@
         <!-- PRODUCTOS -->
         <div class="grid grid-cols-2 gap-3 mb-6">
             <button onclick="add('V8', 60)" class="apple-card p-5 btn-press text-left border-l-8 border-blue-400">
-                <div class="text-[10px] font-black uppercase text-blue-500 italic">Vainilla 8oz</div>
+                <div class="text-[10px] font-black uppercase text-blue-500">Vainilla 8oz</div>
                 <div class="text-2xl font-black">$60</div>
             </button>
             <button onclick="add('C8', 60)" class="apple-card p-5 btn-press text-left border-l-8 border-orange-900">
-                <div class="text-[10px] font-black uppercase text-orange-900 italic">Choco 8oz</div>
+                <div class="text-[10px] font-black uppercase text-orange-900">Choco 8oz</div>
                 <div class="text-2xl font-black">$60</div>
             </button>
             <button onclick="add('V16', 110)" class="apple-card p-5 btn-press text-left border-l-8 border-blue-400">
-                <div class="text-[10px] font-black uppercase text-blue-500 italic">Vainilla 16oz</div>
+                <div class="text-[10px] font-black uppercase text-blue-500">Vainilla 16oz</div>
                 <div class="text-2xl font-black">$110</div>
             </button>
             <button onclick="add('C16', 130)" class="apple-card p-5 btn-press text-left border-l-8 border-orange-900">
-                <div class="text-[10px] font-black uppercase text-orange-900 italic">Choco 16oz</div>
+                <div class="text-[10px] font-black uppercase text-orange-900">Choco 16oz</div>
                 <div class="text-2xl font-black">$130</div>
             </button>
         </div>
 
-        <div id="gridPromos" class="grid grid-cols-1 gap-3 mb-20"></div>
+        <div id="gridPromos" class="grid grid-cols-1 gap-3 mb-24"></div>
         <button onclick="abrirResumen()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black text-lg shadow-2xl btn-press z-10">Ver Resumen Hoy</button>
     </div>
 
@@ -74,30 +68,21 @@
         <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl flex flex-col max-h-[85vh]">
             <h3 class="text-2xl font-black mb-4 text-center">Nuevo Gasto</h3>
             <div class="space-y-3 overflow-y-auto pr-2 scroll-beauty">
-                <input id="gProv" type="text" placeholder="Proveedor (Costco, Brenda...)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold text-sm">
-                <select id="gMet" class="w-full p-4 bg-gray-50 rounded-2xl font-bold text-sm">
+                <input id="gProv" type="text" placeholder="Proveedor (Costco, Brenda...)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold text-sm border-0">
+                <select id="gMet" class="w-full p-4 bg-gray-50 rounded-2xl font-bold text-sm border-0">
                     <option value="Efectivo">Efectivo</option>
                     <option value="Débito">Débito</option>
-                    <option value="Transferencia">Transferencia</option>
                 </select>
-                <select id="gIns" onchange="sugerirGasto()" class="w-full p-4 bg-gray-50 rounded-2xl font-bold text-sm">
+                <select id="gIns" onchange="sugerirGasto()" class="w-full p-4 bg-gray-50 rounded-2xl font-bold text-sm border-0">
                     <option value="">¿Qué compraste?</option>
-                    <optgroup label="Ingredientes">
-                        <option value="Leche" data-p="279">Leche (12kg)</option>
-                        <option value="Huevo" data-p="65">Huevo (30 pzs)</option>
-                        <option value="Crema Entera" data-p="75.85">Crema Entera (900g)</option>
-                        <option value="Vainilla" data-p="319">Vainilla (500ml)</option>
-                        <option value="Azúcar" data-p="69">Azúcar (2kg)</option>
-                    </optgroup>
-                    <optgroup label="Desechables">
-                        <option value="Vaso 8 oz" data-p="16">Vaso 8 oz (25 pzs)</option>
-                        <option value="Tapa 8 oz" data-p="29">Tapa 8 oz (50 pzs)</option>
-                        <option value="Desechable 1L" data-p="33">Desechable 1L (15 pzs)</option>
-                    </optgroup>
+                    <option value="Leche" data-p="279">Leche (12kg)</option>
+                    <option value="Huevo" data-p="65">Huevo (30 pzs)</option>
+                    <option value="Crema" data-p="75.85">Crema (900g)</option>
+                    <option value="Azúcar" data-p="69">Azúcar (2kg)</option>
                 </select>
                 <div class="grid grid-cols-2 gap-3">
-                    <input id="gCan" type="number" value="1" oninput="sugerirGasto()" class="p-4 bg-gray-50 rounded-2xl font-bold text-center">
-                    <input id="gTot" type="number" step="0.01" class="p-4 bg-yellow-50 rounded-2xl font-black text-center text-blue-600">
+                    <input id="gCan" type="number" value="1" oninput="sugerirGasto()" class="p-4 bg-gray-50 rounded-2xl font-bold text-center border-0">
+                    <input id="gTot" type="number" step="0.01" class="p-4 bg-yellow-50 rounded-2xl font-black text-center text-blue-600 border-0">
                 </div>
                 <button onclick="guardarGasto()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press">Registrar Gasto</button>
             </div>
@@ -105,47 +90,45 @@
         </div>
     </div>
 
-    <!-- MODAL AJUSTES (CORREGIDO) -->
+    <!-- MODAL AJUSTES -->
     <div id="modalAjustes" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty text-center">
             <h3 class="text-2xl font-black mb-6">Ajustes</h3>
-            
-            <!-- CREAR PROMO -->
-            <div class="bg-blue-50 p-5 rounded-[25px] mb-6">
+            <div class="bg-blue-50 p-5 rounded-[25px] mb-6 text-center">
                 <label class="text-[10px] font-black text-blue-400 uppercase block mb-3">Nuevo Botón Promo</label>
-                <input id="pNom" type="text" placeholder="Nombre de la Promo" class="w-full p-4 rounded-2xl mb-2 font-bold shadow-sm border-0">
-                <input id="pPre" type="number" placeholder="Precio Final $" class="w-full p-4 rounded-2xl mb-4 font-bold shadow-sm border-0">
-                
-                <p class="text-[9px] font-black text-gray-400 uppercase mb-3 tracking-widest italic">¿Qué incluye esta promo? (Receta)</p>
-                <!-- CONTADORES DE RECETA -->
-                <div id="contadoresPromo" class="grid grid-cols-3 gap-2 mb-6">
-                    <!-- JS generará los botones aquí -->
-                </div>
-                
-                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black btn-press">Crear Botón</button>
+                <input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-2xl mb-2 font-bold border-0 shadow-sm">
+                <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-2xl mb-4 font-bold border-0 shadow-sm">
+                <div id="contadoresPromo" class="grid grid-cols-3 gap-2 mb-6"></div>
+                <button onclick="guardarNuevaPromo()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black btn-press text-sm">Crear Botón</button>
             </div>
-
             <div id="listaPromosGestion" class="space-y-2 mb-6"></div>
             <button onclick="cerrarModal('modalAjustes')" class="w-full py-2 text-gray-300 font-bold uppercase text-xs">Cerrar</button>
         </div>
     </div>
 
-    <!-- OTROS MODALES (PAGO, RESUMEN, ETC) -->
-    <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-100 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-600">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-6 text-red-500 font-black">Cancelar</button></div></div></div>
-    <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl relative text-center"><div id="resumenContent" class="min-h-[300px] flex flex-col justify-center"></div><div class="flex justify-between mt-8"><button onclick="cambiarPagina(-1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">←</button><button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full font-black text-xl">→</button></div><button onclick="abrirConfirmReset()" class="w-full mt-10 text-[10px] text-red-400 font-black uppercase">Cerrar Caja y Guardar Día</button><button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl">×</button></div></div>
-    <div id="modalBitacora" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="listaBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
-    <div id="modalHistorialDias" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6">Días Pasados</h3><div id="listaDias" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="cerrarModal('modalHistorialDias')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
+    <!-- MODAL RESUMEN -->
+    <div id="modalResumen" class="fixed inset-0 modal-bg hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl relative text-center">
+            <div id="resumenContent" class="min-h-[300px] flex flex-col justify-center"></div>
+            <div class="flex justify-between mt-8"><button onclick="cambiarPagina(-1)" class="bg-gray-100 p-5 rounded-full">←</button><button onclick="cambiarPagina(1)" class="bg-gray-100 p-5 rounded-full">→</button></div>
+            <button onclick="abrirConfirmReset()" class="w-full mt-10 text-[10px] text-red-400 font-black uppercase">Cerrar Caja y Guardar Día</button>
+            <button onclick="cerrarModal('modalResumen')" class="absolute top-6 right-6 text-gray-300 text-2xl">×</button>
+        </div>
+    </div>
+
+    <!-- MODAL PAGO -->
+    <div id="modalPago" class="fixed inset-0 modal-bg hidden items-end justify-center z-50"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="finalizar('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button><button onclick="finalizar('Terminal')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600 border-l-8 border-blue-500">💳 Terminal</button><button onclick="finalizar('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">🏦 Transferencia</button><button onclick="cerrarModal('modalPago')" class="w-full py-6 text-red-500 font-black">Cancelar</button></div></div></div>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwl8xOJxI2mIZ_0y0l_6XF9jbVuAqvEilL8HbstsfG6PKvZSJ45MqUmVtiorlp0bPFngA/exec";
+        // ¡REEMPLAZA ESTA URL!
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxC1dHG4fBNlMHzQXhpK8JHQNKtcVnSM4E91-yupBukv7sNqXE0N3hzYSEU8LE7s0mpVA/exec";
 
         const tiposInv = ['V8','C8','V16','C16','V32','C32'];
         let carrito = [];
         let pagActual = 0;
-        let descuentoPct = 0;
         let recetaPromoNueva = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
 
-        let db = JSON.parse(localStorage.getItem('heladeria_v9')) || {
+        let db = JSON.parse(localStorage.getItem('heladeria_v9_stable')) || {
             inv: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
             dinero: { efec:0, term:0, tran:0 },
             bitacora: [],
@@ -160,69 +143,46 @@
         }
 
         function actualizarUI() {
-            let base = carrito.reduce((a, b) => a + Number(b.precio), 0);
-            let total = base - (base * descuentoPct / 100);
+            let total = carrito.reduce((a, b) => a + Number(b.precio), 0);
             document.getElementById('displayTotal').innerText = `$${total.toFixed(2)}`;
-            document.getElementById('displayLista').innerText = (carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Carrito vacío");
+            document.getElementById('displayLista').innerText = (carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Esperando...");
         }
 
-        // --- GESTIÓN DE PROMOS (CORREGIDA) ---
         function renderContadoresReceta() {
             const cont = document.getElementById('contadoresPromo');
+            if(!cont) return;
             cont.innerHTML = "";
             tiposInv.forEach(t => {
-                cont.innerHTML += `
-                    <div class="text-center bg-white p-2 rounded-xl shadow-sm border border-blue-100">
-                        <div class="text-[9px] font-black mb-1">${t}</div>
-                        <div class="flex items-center justify-center gap-2">
-                            <button onclick="cambiarRecetaPromo('${t}',-1)" class="font-bold text-gray-300">-</button>
-                            <span id="receta${t}" class="text-xs font-black">0</span>
-                            <button onclick="cambiarRecetaPromo('${t}',1)" class="font-bold text-blue-500">+</button>
-                        </div>
-                    </div>
-                `;
+                cont.innerHTML += `<div class="bg-white p-2 rounded-xl shadow-sm border border-blue-50"><div class="text-[8px] font-black">${t}</div><div class="flex items-center justify-center gap-1"><button onclick="cambiarRecetaPromo('${t}',-1)" class="text-gray-300 font-bold">-</button><span id="receta${t}" class="text-xs font-black">0</span><button onclick="cambiarRecetaPromo('${t}',1)" class="text-blue-500 font-bold">+</button></div></div>`;
             });
         }
 
-        function cambiarRecetaPromo(tipo, cant) {
-            recetaPromoNueva[tipo] = Math.max(0, recetaPromoNueva[tipo] + cant);
-            document.getElementById('receta' + tipo).innerText = recetaPromoNueva[tipo];
-        }
+        function cambiarRecetaPromo(t, c) { recetaPromoNueva[t] = Math.max(0, recetaPromoNueva[t] + c); document.getElementById('receta'+t).innerText = recetaPromoNueva[t]; }
 
         function guardarNuevaPromo() {
             let n = document.getElementById('pNom').value;
             let p = document.getElementById('pPre').value;
             if(n && p) {
-                db.promosConfig.push({ 
-                    nombre: n, 
-                    precio: Number(p), 
-                    receta: {...recetaPromoNueva} 
-                });
-                guardarDB();
-                renderPromosMain();
-                renderListaGestion();
-                cerrarModal('modalAjustes');
-                // Reset campos
-                document.getElementById('pNom').value = ""; document.getElementById('pPre').value = "";
+                db.promosConfig.push({ nombre: n, precio: Number(p), receta: {...recetaPromoNueva} });
+                guardarDB(); renderPromosMain(); cerrarModal('modalAjustes');
                 recetaPromoNueva = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
             }
         }
 
         function renderPromosMain() {
-            const g = document.getElementById('gridPromos'); g.innerHTML = "";
-            db.promosConfig.forEach((p) => {
-                g.innerHTML += `
-                    <button onclick="add('${p.nombre}', ${p.precio}, ${JSON.stringify(p.receta)})" class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600 shadow-sm">
-                        <span class="font-black text-sm text-gray-700">${p.nombre}</span>
-                        <b class="text-blue-600 text-xl font-black">$${Number(p.precio).toFixed(2)}</b>
-                    </button>`;
+            const g = document.getElementById('gridPromos');
+            g.innerHTML = "";
+            db.promosConfig.forEach((p, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600 shadow-sm";
+                btn.onclick = () => add(p.nombre, p.precio, p.receta);
+                btn.innerHTML = `<span class="font-black text-sm text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${Number(p.precio).toFixed(2)}</b>`;
+                g.appendChild(btn);
             });
         }
 
-        // --- VENTAS Y CIERRE ---
         function finalizar(metodo) {
-            let base = carrito.reduce((a, b) => a + Number(b.precio), 0);
-            let totalV = base - (base * descuentoPct / 100);
+            let totalV = carrito.reduce((a, b) => a + Number(b.precio), 0);
             const fecha = new Date().toLocaleDateString();
             const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -233,70 +193,57 @@
             else if(metodo === 'Transferencia') db.dinero.tran += totalV;
 
             db.bitacora.push({ hora, monto: totalV, metodo, detalle: carrito.map(i => i.tipo).join(', ') });
-            
-            carrito.forEach(item => {
-                if(db.inv[item.tipo] !== undefined) db.inv[item.tipo]++;
-                if(item.receta) {
-                    for(let h in item.receta) { db.inv[h] += item.receta[h]; }
-                }
+            carrito.forEach(i => { 
+                if(db.inv[i.tipo] !== undefined) db.inv[i.tipo]++;
+                if(i.receta) { for(let h in i.receta) db.inv[h] += i.receta[h]; }
             });
 
-            guardarDB(); carrito = []; descuentoPct = 0; actualizarUI(); cerrarModal('modalPago');
+            guardarDB(); carrito = []; actualizarUI(); cerrarModal('modalPago');
+        }
+
+        function guardarGasto() {
+            const prov = document.getElementById('gProv').value || "S/P";
+            const ins = document.getElementById('gIns').value;
+            const monto = parseFloat(document.getElementById('gTot').value);
+            if(!ins || !monto) return;
+            fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion:"GASTO", fecha: new Date().toLocaleDateString(), proveedor: prov, metodo: document.getElementById('gMet').value, concepto: ins, monto: monto.toFixed(2), pagado: "SI" }) });
+            db.gastos.push({ total: monto }); guardarDB(); cerrarModal('modalGastos'); alert("Gasto Guardado");
         }
 
         function abrirConfirmReset() {
-            if(confirm("¿Cerrar el día y guardar reporte?")) {
+            if(confirm("¿Cerrar el día?")) {
                 const hoy = new Date().toLocaleDateString();
                 const totalG = db.gastos.reduce((a, b) => a + b.total, 0);
                 fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion: "CIERRE", fecha: hoy, efectivo: db.dinero.efec.toFixed(2), terminal: db.dinero.term.toFixed(2), transf: db.dinero.tran.toFixed(2), gastos: totalG.toFixed(2) }) }).then(() => {
-                    db.reportesPasados.push({ fecha: hoy, total: (db.dinero.efec + db.dinero.term + db.dinero.tran - ( (db.dinero.efec + db.dinero.term + db.dinero.tran) * 0.5 ) - totalG) });
+                    db.reportesPasados.push({ fecha: hoy, total: (db.dinero.efec + db.dinero.term + db.dinero.tran - totalG) });
                     db.inv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 }; db.dinero = { efec:0, term:0, tran:0 }; db.bitacora = []; db.gastos = [];
                     guardarDB(); location.reload();
                 });
             }
         }
 
-        // --- GASTOS ---
-        function sugerirGasto() {
-            const ins = document.getElementById('gIns');
-            const pBase = ins.options[ins.selectedIndex].getAttribute('data-p');
-            const can = document.getElementById('gCan').value;
-            if(pBase) document.getElementById('gTot').value = (pBase * can).toFixed(2);
-        }
-        function guardarGasto() {
-            const prov = document.getElementById('gProv').value || "S/P";
-            const ins = document.getElementById('gIns').value;
-            const monto = parseFloat(document.getElementById('gTot').value);
-            if(!ins || !monto) return;
-            const d = { tipoAccion:"GASTO", fecha: new Date().toLocaleDateString(), proveedor: prov, metodo: document.getElementById('gMet').value, concepto: ins, monto: monto.toFixed(2), pagado: "SI" };
-            fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(d) });
-            db.gastos.push({ proveedor: prov, concepto: ins, total: monto });
-            guardarDB(); cerrarModal('modalGastos');
-        }
-
-        // --- AYUDANTES ---
-        function guardarDB() { localStorage.setItem('heladeria_v9', JSON.stringify(db)); }
-        function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
-        function abrirGastos() { document.getElementById('modalGastos').style.display = 'flex'; }
-        function abrirAjustes() { document.getElementById('modalAjustes').style.display = 'flex'; renderContadoresReceta(); renderListaGestion(); }
-        function abrirPago() { if(carrito.length > 0) document.getElementById('modalPago').style.display = 'flex'; }
-        function borrarUltimo() { carrito.pop(); actualizarUI(); }
-        function aplicarDescuento(p) { descuentoPct = p; actualizarUI(); }
-        function abrirResumen() { pagActual = 0; document.getElementById('modalResumen').style.display = 'flex'; renderResumen(); }
-        function cambiarPagina(d) { pagActual = Math.max(0, Math.min(2, pagActual + d)); renderResumen(); }
         function renderResumen() {
             const cont = document.getElementById('resumenContent');
             let bruto = db.dinero.efec + db.dinero.term + db.dinero.tran;
             let totalG = db.gastos.reduce((a, b) => a + b.total, 0);
-            let h = "";
-            if(pagActual === 0) h = `<h4 class="font-black text-blue-500 mb-6 uppercase text-xs">Ventas Brutas</h4><div class="space-y-4 text-2xl text-left"><div class="flex justify-between border-b"><span>Efectivo</span><b>$${db.dinero.efec.toFixed(2)}</b></div><div class="flex justify-between border-b"><span>Tarjeta</span><b>$${db.dinero.term.toFixed(2)}</b></div><div class="flex justify-between"><span>TOTAL</span><b class="text-blue-600">$${bruto.toFixed(2)}</b></div></div>`;
-            else if(pagActual === 1) h = `<h4 class="font-black text-red-500 mb-6 uppercase text-xs">Gastos de Hoy</h4><b class="text-5xl text-red-600 font-black">$${totalG.toFixed(2)}</b>`;
-            else h = `<h4 class="font-black text-green-500 mb-6 uppercase text-xs">Final (50% Apartado)</h4><div class="space-y-2 text-left text-sm"><div class="flex justify-between"><span>Venta Bruta:</span><b>$${bruto.toFixed(2)}</b></div><div class="flex justify-between text-orange-500"><span>Apartado (50%):</span><b>-$${(bruto * 0.5).toFixed(2)}</b></div><div class="flex justify-between text-red-500"><span>Gastos:</span><b>-$${totalG.toFixed(2)}</b></div><div class="flex justify-between text-2xl font-black pt-4 border-t mt-4"><span>NETO:</span><b class="text-green-600">$${(bruto - (bruto * 0.5) - totalG).toFixed(2)}</b></div></div>`;
-            cont.innerHTML = h;
+            if(pagActual === 0) cont.innerHTML = `<h4 class="font-black text-blue-500 mb-4">Ventas</h4><b class="text-4xl">$${bruto.toFixed(2)}</b>`;
+            else if(pagActual === 1) cont.innerHTML = `<h4 class="font-black text-red-500 mb-4">Gastos</h4><b class="text-4xl text-red-600">$${totalG.toFixed(2)}</b>`;
+            else cont.innerHTML = `<h4 class="font-black text-green-500 mb-4">Neto (50%)</h4><b class="text-4xl text-green-600">$${(bruto - (bruto * 0.5) - totalG).toFixed(2)}</b>`;
         }
-        function abrirBitacora() { document.getElementById('modalBitacora').style.display = 'flex'; const cont = document.getElementById('listaBitacora'); cont.innerHTML = ""; [...db.bitacora].reverse().forEach((v) => { cont.innerHTML += `<div class="apple-card p-5 border-l-8 border-blue-500 flex justify-between items-center mb-1"><div><span class="text-[10px] font-black text-blue-400">${v.hora}</span><div class="text-lg font-black">$${v.monto.toFixed(2)}</div><div class="text-[10px] text-gray-400 italic">${v.detalle}</div></div></div>`; }); }
-        function abrirHistorialDias() { document.getElementById('modalHistorialDias').style.display = 'flex'; const cont = document.getElementById('listaDias'); cont.innerHTML = ""; db.reportesPasados.slice().reverse().forEach(r => { cont.innerHTML += `<div class="bg-gray-100 p-5 rounded-[22px] mb-2"><div class="font-black">${r.fecha}</div><div class="text-blue-600 font-bold">$${r.total.toFixed(2)}</div></div>`; }); }
-        function renderListaGestion() { const l = document.getElementById('listaPromosGestion'); l.innerHTML = ""; db.promosConfig.forEach((p, i) => { l.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl mb-1 text-left"><span class="text-xs font-bold">${p.nombre}</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500 font-black">×</button></div>`; }); }
+
+        // --- FUNCIONES EXTRA ---
+        function abrirAjustes() { document.getElementById('modalAjustes').style.display = 'flex'; renderContadoresReceta(); renderListaGestion(); }
+        function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+        function abrirGastos() { document.getElementById('modalGastos').style.display = 'flex'; }
+        function sugerirGasto() { const ins = document.getElementById('gIns'); const p = ins.options[ins.selectedIndex].getAttribute('data-p'); document.getElementById('gTot').value = (p * document.getElementById('gCan').value).toFixed(2); }
+        function abrirResumen() { pagActual = 0; document.getElementById('modalResumen').style.display = 'flex'; renderResumen(); }
+        function cambiarPagina(d) { pagActual = Math.max(0, Math.min(2, pagActual + d)); renderResumen(); }
+        function guardarDB() { localStorage.setItem('heladeria_v9_stable', JSON.stringify(db)); }
+        function abrirPago() { if(carrito.length > 0) document.getElementById('modalPago').style.display = 'flex'; }
+        function borrarUltimo() { carrito.pop(); actualizarUI(); }
+        function abrirBitacora() { document.getElementById('modalBitacora').style.display = 'flex'; }
+        function abrirHistorialDias() { document.getElementById('modalHistorialDias').style.display = 'flex'; }
+        function renderListaGestion() { const l = document.getElementById('listaPromosGestion'); l.innerHTML = ""; db.promosConfig.forEach((p, i) => { l.innerHTML += `<div class="flex justify-between p-2 bg-gray-50 rounded-xl mb-1 text-xs"><span>${p.nombre}</span><button onclick="db.promosConfig.splice(${i},1);guardarDB();renderPromosMain();renderListaGestion();" class="text-red-500">×</button></div>`; }); }
 
         renderPromosMain();
     </script>
