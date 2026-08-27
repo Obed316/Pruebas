@@ -3,257 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería Pro v9.3</title>
+    <title>Heladería POS v9.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; }
+        body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
         .apple-card { background: white; border-radius: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .btn-press:active { transform: scale(0.96); background-color: #e5e5ea; }
-        .modal-bg { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 50; }
-        .counter-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #f3f4f6; border-radius: 10px; font-weight: bold; }
+        .btn-press:active { transform: scale(0.95); background-color: #e5e5ea; }
+        .modal-bg { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 100; }
+        .scroll-beauty::-webkit-scrollbar { width: 4px; }
+        .scroll-beauty::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
     </style>
 </head>
 <body class="p-4 pb-28 text-gray-800">
     <div class="max-w-md mx-auto">
+        <!-- CABECERA -->
         <header class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-black italic text-blue-600 tracking-tight">Heladería 🍦</h1>
+            <h1 class="text-2xl font-black text-blue-600">Heladería 🍦</h1>
             <div class="flex gap-2">
-                <button onclick="abrirMod('modalGastos')" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">💸</button>
-                <button onclick="abrirMod('modalAjustes')" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">⚙️</button>
+                <button onclick="verMod('mGasto')" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">💸</button>
+                <button onclick="verMod('mAjuste')" class="bg-white p-3 rounded-full shadow-sm btn-press border text-xl">⚙️</button>
             </div>
         </header>
 
-        <!-- TOTAL -->
+        <!-- PANTALLA TOTAL -->
         <div class="apple-card p-8 mb-6 text-center border-b-4 border-blue-500">
-            <span class="text-gray-400 text-[10px] font-black uppercase mb-2 block">Total a Cobrar</span>
-            <div id="displayTotal" class="text-6xl font-black my-2 text-gray-900 tracking-tighter">$0.00</div>
-            <div id="displayLista" class="text-gray-400 text-xs truncate italic">Carrito vacío...</div>
+            <span class="text-gray-400 text-[10px] font-black uppercase mb-2 block tracking-widest">Total Venta</span>
+            <div id="txtTotal" class="text-6xl font-black my-2 text-gray-900 tracking-tighter">$0.00</div>
+            <div id="txtLista" class="text-gray-400 text-xs italic truncate">Esperando...</div>
             
             <div class="grid grid-cols-2 gap-4 mt-6">
-                <button onclick="abrirMod('modalPago')" class="bg-green-500 text-white font-black py-5 rounded-[20px] btn-press text-lg">Cobrar</button>
-                <button onclick="borrarUltimo()" class="bg-gray-100 text-gray-500 font-bold py-5 rounded-[20px] btn-press text-2xl">←</button>
+                <button onclick="verMod('mPago')" class="bg-green-500 text-white font-black py-5 rounded-[20px] btn-press text-lg uppercase tracking-widest">Cobrar</button>
+                <button onclick="limpiarUltimo()" class="bg-gray-100 text-gray-500 font-bold py-5 rounded-[20px] btn-press text-2xl">←</button>
             </div>
         </div>
 
-        <!-- PRODUCTOS BASE -->
+        <!-- PRODUCTOS FIJOS -->
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <button onclick="addCar('V8', 60)" class="apple-card p-5 btn-press text-left border-l-8 border-blue-400">
-                <div class="text-[10px] font-black text-blue-500">VAINILLA 8oz</div>
+            <button onclick="clickAdd('V8', 60)" class="apple-card p-5 btn-press text-left border-l-8 border-blue-400">
+                <div class="text-[10px] font-black text-blue-400">VAINILLA 8oz</div>
                 <div class="text-2xl font-black">$60</div>
             </button>
-            <button onclick="addCar('C8', 60)" class="apple-card p-5 btn-press text-left border-l-8 border-orange-900">
+            <button onclick="clickAdd('C8', 60)" class="apple-card p-5 btn-press text-left border-l-8 border-orange-900">
                 <div class="text-[10px] font-black text-orange-900">CHOCO 8oz</div>
                 <div class="text-2xl font-black">$60</div>
             </button>
-            <button onclick="addCar('V16', 110)" class="apple-card p-5 btn-press text-left border-l-8 border-blue-400">
-                <div class="text-[10px] font-black text-blue-500">VAINILLA 16oz</div>
+            <button onclick="clickAdd('V16', 110)" class="apple-card p-5 btn-press text-left border-l-8 border-blue-400">
+                <div class="text-[10px] font-black text-blue-400">VAINILLA 16oz</div>
                 <div class="text-2xl font-black">$110</div>
             </button>
-            <button onclick="addCar('C16', 130)" class="apple-card p-5 btn-press text-left border-l-8 border-orange-900">
+            <button onclick="clickAdd('C16', 130)" class="apple-card p-5 btn-press text-left border-l-8 border-orange-900">
                 <div class="text-[10px] font-black text-orange-900">CHOCO 16oz</div>
                 <div class="text-2xl font-black">$130</div>
             </button>
         </div>
 
-        <div id="gridPromos" class="grid grid-cols-1 gap-3 mb-24"></div>
+        <div id="boxPromos" class="grid grid-cols-1 gap-3 mb-24"></div>
         
-        <button onclick="abrirResumen()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black shadow-2xl btn-press uppercase tracking-widest z-40">Ver Resumen Hoy</button>
+        <button onclick="mostrarCierre()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black shadow-2xl btn-press uppercase z-40">Ver Resumen Hoy</button>
     </div>
 
     <!-- MODAL GASTOS -->
-    <div id="modalGastos" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
+    <div id="mGasto" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl">
-            <h3 class="text-2xl font-black mb-4 text-center">Registrar Gasto</h3>
+            <h3 class="text-2xl font-black mb-4 text-center">Gasto Nuevo</h3>
             <div class="space-y-4">
-                <input id="gProv" type="text" placeholder="Proveedor (Brenda, Costco...)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
-                <select id="gIns" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
-                    <option value="Leche">Leche</option>
-                    <option value="Huevo">Huevo</option>
-                    <option value="Crema">Crema</option>
-                    <option value="Desechables">Desechables</option>
-                </select>
-                <input id="gTot" type="number" placeholder="Monto $" class="w-full p-4 bg-yellow-50 rounded-2xl font-black text-blue-600 border-0">
-                <button onclick="guardarGasto()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press">Guardar Gasto</button>
-                <button onclick="cerrarMod('modalGastos')" class="w-full text-gray-300 font-bold text-xs uppercase mt-2">Cerrar</button>
+                <input id="gP" type="text" placeholder="Proveedor" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
+                <input id="gC" type="text" placeholder="Concepto (Ej: Leche)" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
+                <input id="gM" type="number" placeholder="Monto $" class="w-full p-4 bg-yellow-50 rounded-2xl font-black text-blue-600 border-0">
+                <button onclick="runGasto()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press">Guardar</button>
+                <button onclick="ocultarMod('mGasto')" class="w-full text-gray-300 font-bold text-[10px] uppercase mt-2">Cerrar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL AJUSTES -->
-    <div id="modalAjustes" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
+    <!-- MODAL AJUSTES (PROMOS) -->
+    <div id="mAjuste" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto">
             <h3 class="text-2xl font-black mb-6 text-center">Crear Promo</h3>
             <div class="bg-blue-50 p-5 rounded-[25px] mb-4">
-                <input id="pNom" type="text" placeholder="Nombre" class="w-full p-4 rounded-xl mb-2 font-bold border-0">
-                <input id="pPre" type="number" placeholder="Precio $" class="w-full p-4 rounded-xl mb-4 font-bold border-0">
-                <div id="contadoresPromo" class="grid grid-cols-3 gap-2 mb-4"></div>
-                <button onclick="crearBotonPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">Crear Botón</button>
+                <input id="pName" type="text" placeholder="Nombre de Promo" class="w-full p-4 rounded-xl mb-2 font-bold border-0">
+                <input id="pPrice" type="number" placeholder="Precio Final $" class="w-full p-4 rounded-xl mb-4 font-bold border-0">
+                
+                <p class="text-[9px] font-black text-gray-400 mb-2 uppercase">Incluye estos helados:</p>
+                <div id="boxReceta" class="grid grid-cols-3 gap-2 mb-6"></div>
+                
+                <button onclick="runCrearPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">Crear Botón</button>
             </div>
-            <div id="listaGestion" class="space-y-2"></div>
-            <button onclick="cerrarMod('modalAjustes')" class="w-full text-gray-300 font-bold text-xs mt-4">Cerrar</button>
+            <div id="boxGestion" class="space-y-2"></div>
+            <button onclick="ocultarMod('mAjuste')" class="w-full text-gray-300 font-bold text-xs mt-4">Cerrar</button>
         </div>
     </div>
 
     <!-- MODAL PAGO -->
-    <div id="modalPago" class="fixed inset-0 modal-bg hidden flex items-end justify-center">
+    <div id="mPago" class="fixed inset-0 modal-bg hidden flex items-end justify-center">
         <div class="bg-white w-full max-w-md rounded-t-[40px] p-10">
             <h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3>
             <div class="space-y-4">
-                <button onclick="confirmarPago('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl px-12 text-left">💵 Efectivo</button>
-                <button onclick="confirmarPago('Terminal')" class="w-full py-6 bg-blue-50 rounded-2xl font-black text-xl px-12 text-left text-blue-600">💳 Terminal</button>
-                <button onclick="cerrarMod('modalPago')" class="w-full py-4 text-red-500 font-bold">Cancelar</button>
+                <button onclick="runPago('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl text-left px-12">💵 Efectivo</button>
+                <button onclick="runPago('Terminal')" class="w-full py-6 bg-blue-50 rounded-2xl font-black text-xl text-left px-12 text-blue-600">💳 Terminal</button>
+                <button onclick="ocultarMod('mPago')" class="w-full py-4 text-red-500 font-bold">Cancelar</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL RESUMEN -->
-    <div id="modalResumen" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
+    <div id="mResumen" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] p-8 text-center">
-            <div id="resumenData" class="py-10"></div>
-            <button onclick="cierreFinal()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black mb-4">Cerrar Caja y Guardar</button>
-            <button onclick="cerrarMod('modalResumen')" class="text-gray-300 font-bold uppercase text-xs">Cerrar</button>
+            <div id="boxResData" class="py-10"></div>
+            <button onclick="runCierreCaja()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black mb-4 btn-press">Cerrar Día y Guardar</button>
+            <button onclick="ocultarMod('mResumen')" class="text-gray-300 font-bold uppercase text-xs">Cerrar</button>
         </div>
     </div>
 
     <script>
-        // --- CAMBIA ESTO ---
-        const URL_GOOGLE = "https://script.google.com/macros/s/AKfycbxC1dHG4fBNlMHzQXhpK8JHQNKtcVnSM4E91-yupBukv7sNqXE0N3hzYSEU8LE7s0mpVA/exec";
+        const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxC1dHG4fBNlMHzQXhpK8JHQNKtcVnSM4E91-yupBukv7sNqXE0N3hzYSEU8LE7s0mpVA/exec";
 
-        let carrito = [];
-        let items = ['V8','C8','V16','C16','V32','C32'];
+        let cart = [];
+        let invTypes = ['V8','C8','V16','C16','V32','C32'];
         let tempReceta = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
 
-        let db = JSON.parse(localStorage.getItem('ice_v93')) || {
-            dinero: { efec:0, term:0 },
-            inv: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
+        let db = JSON.parse(localStorage.getItem('ice_v94')) || {
+            cash: 0, card: 0, 
+            inventory: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
             promos: [],
-            gastosHoy: 0
+            spentToday: 0
         };
 
-        function addCar(tipo, precio, receta = null) {
-            carrito.push({ tipo, precio, receta });
-            let total = carrito.reduce((a,b) => a + b.precio, 0);
-            document.getElementById('displayTotal').innerText = `$${total.toFixed(2)}`;
-            document.getElementById('displayLista').innerText = carrito.map(i => i.tipo).join(' + ');
+        function clickAdd(tipo, precio, receta = null) {
+            cart.push({ tipo, precio, receta });
+            updateUI();
         }
 
-        function borrarUltimo() {
-            carrito.pop();
-            let total = carrito.reduce((a,b) => a + b.precio, 0);
-            document.getElementById('displayTotal').innerText = `$${total.toFixed(2)}`;
-            document.getElementById('displayLista').innerText = carrito.length > 0 ? carrito.map(i => i.tipo).join(' + ') : "Carrito vacío";
+        function updateUI() {
+            let total = cart.reduce((a, b) => a + b.precio, 0);
+            document.getElementById('txtTotal').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('txtLista').innerText = cart.map(i => i.tipo).join(' + ') || "Caja vacía";
         }
 
-        function confirmarPago(metodo) {
-            let total = carrito.reduce((a,b) => a + b.precio, 0);
-            if(metodo === 'Efectivo') db.dinero.efec += total;
-            else db.dinero.term += total;
+        function limpiarUltimo() { cart.pop(); updateUI(); }
 
-            carrito.forEach(i => {
-                if(db.inv[i.tipo] !== undefined) db.inv[i.tipo]++;
-                if(i.receta) { for(let k in i.receta) db.inv[k] += i.receta[k]; }
+        function verMod(id) {
+            document.getElementById(id).classList.remove('hidden');
+            if(id === 'mAjuste') { renderReceta(); renderGestion(); }
+        }
+        function ocultarMod(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function renderReceta() {
+            const box = document.getElementById('boxReceta');
+            box.innerHTML = "";
+            invTypes.forEach(t => {
+                box.innerHTML += `<div class="bg-white p-2 rounded-xl shadow-sm border border-blue-50 text-center"><div class="text-[8px] font-black">${t}</div><div class="flex justify-center items-center gap-1"><button onclick="editRec('${t}',-1)">-</button><span id="recVal${t}" class="text-xs font-black">0</span><button onclick="editRec('${t}',1)">+</button></div></div>`;
+            });
+        }
+        function editRec(t, val) { tempReceta[t] = Math.max(0, tempReceta[t] + val); document.getElementById('recVal'+t).innerText = tempReceta[t]; }
+
+        function runCrearPromo() {
+            let n = document.getElementById('pName').value;
+            let p = parseFloat(document.getElementById('pPrice').value);
+            if(!n || !p) return;
+            db.promos.push({ nombre: n, precio: p, receta: {...tempReceta} });
+            tempReceta = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
+            save(); renderPromos(); ocultarMod('mAjuste');
+        }
+
+        function renderPromos() {
+            const box = document.getElementById('boxPromos');
+            box.innerHTML = "";
+            db.promos.forEach((p, idx) => {
+                box.innerHTML += `<button onclick="clickAddPromo(${idx})" class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600"><span class="font-black text-gray-700 uppercase text-sm">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${p.precio}</b></button>`;
+            });
+        }
+        function clickAddPromo(i) { let p = db.promos[i]; clickAdd(p.nombre, p.precio, p.receta); }
+
+        function runPago(metodo) {
+            let total = cart.reduce((a, b) => a + b.precio, 0);
+            if(metodo === 'Efectivo') db.cash += total; else db.card += total;
+            
+            cart.forEach(i => {
+                if(db.inventory[i.tipo] !== undefined) db.inventory[i.tipo]++;
+                if(i.receta) { for(let k in i.receta) db.inventory[k] += i.receta[k]; }
             });
 
-            // Enviar a Google
-            fetch(URL_GOOGLE, { method:'POST', mode:'no-cors', body: JSON.stringify({
-                tipoAccion: "VENTA",
-                fecha: new Date().toLocaleDateString(),
-                hora: new Date().toLocaleTimeString(),
-                monto: total, metodo, detalle: carrito.map(i => i.tipo).join(',')
+            fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
+                tipoAccion: "VENTA", fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString(),
+                monto: total, metodo, detalle: cart.map(i => i.tipo).join(',')
             })});
 
-            save(); carrito = []; document.getElementById('displayTotal').innerText = "$0.00";
-            cerrarMod('modalPago'); alert("Cobrado con éxito");
+            save(); cart = []; updateUI(); ocultarMod('mPago'); alert("Cobrado");
         }
 
-        function guardarGasto() {
-            let p = document.getElementById('gProv').value;
-            let m = parseFloat(document.getElementById('gTot').value);
+        function runGasto() {
+            let m = parseFloat(document.getElementById('gM').value);
             if(!m) return;
-            db.gastosHoy += m;
-            fetch(URL_GOOGLE, { method:'POST', mode:'no-cors', body: JSON.stringify({
+            db.spentToday += m;
+            fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                 tipoAccion: "GASTO", fecha: new Date().toLocaleDateString(),
-                proveedor: p, metodo: "Efectivo", concepto: document.getElementById('gIns').value, monto: m, pagado: "SI"
+                proveedor: document.getElementById('gP').value, metodo: "Efectivo", 
+                concepto: document.getElementById('gC').value, monto: m, pagado: "SI"
             })});
-            save(); cerrarMod('modalGastos'); alert("Gasto guardado");
+            save(); ocultarMod('mGasto'); alert("Gasto Guardado");
         }
 
-        function abrirResumen() {
-            let bruto = db.dinero.efec + db.dinero.term;
+        function mostrarCierre() {
+            let bruto = db.cash + db.card;
             let apartado = bruto * 0.5;
-            let neto = bruto - apartado - db.gastosHoy;
-            document.getElementById('resumenData').innerHTML = `
-                <h4 class="text-gray-400 font-bold text-xs uppercase mb-4">Resultado Hoy</h4>
-                <div class="text-left space-y-2">
-                    <div class="flex justify-between font-bold"><span>Venta Bruta:</span> <span>$${bruto.toFixed(2)}</span></div>
-                    <div class="flex justify-between text-orange-500 font-bold"><span>Apartado (50%):</span> <span>-$${apartado.toFixed(2)}</span></div>
-                    <div class="flex justify-between text-red-500 font-bold"><span>Gastos:</span> <span>-$${db.gastosHoy.toFixed(2)}</span></div>
-                    <div class="flex justify-between text-3xl font-black pt-4 border-t text-green-600"><span>NETO:</span> <span>$${neto.toFixed(2)}</span></div>
-                </div>
-            `;
-            abrirMod('modalResumen');
+            document.getElementById('boxResData').innerHTML = `
+                <div class="text-left space-y-3">
+                    <div class="flex justify-between font-bold"><span>Bruto:</span> <span>$${bruto.toFixed(2)}</span></div>
+                    <div class="flex justify-between text-orange-500 font-bold"><span>Apartado 50%:</span> <span>-$${apartado.toFixed(2)}</span></div>
+                    <div class="flex justify-between text-red-500 font-bold"><span>Gastos:</span> <span>-$${db.spentToday.toFixed(2)}</span></div>
+                    <div class="flex justify-between text-4xl font-black pt-4 border-t text-green-600"><span>NETO:</span> <span>$${(bruto - apartado - db.spentToday).toFixed(2)}</span></div>
+                </div>`;
+            verMod('mResumen');
         }
 
-        function cierreFinal() {
-            if(!confirm("¿Cerrar el día?")) return;
-            let bruto = db.dinero.efec + db.dinero.term;
-            fetch(URL_GOOGLE, { method:'POST', mode:'no-cors', body: JSON.stringify({
+        function runCierreCaja() {
+            if(!confirm("¿Cerrar Día?")) return;
+            fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
                 tipoAccion: "CIERRE", fecha: new Date().toLocaleDateString(),
-                efectivo: db.dinero.efec, terminal: db.dinero.term, transf: 0,
-                gastos: db.gastosHoy, neto: (bruto - (bruto*0.5) - db.gastosHoy)
+                efectivo: db.cash, terminal: db.card, transf: 0,
+                gastos: db.spentToday, neto: ( (db.cash + db.card) * 0.5 - db.spentToday)
             })}).then(() => {
-                db.dinero = { efec:0, term:0 };
-                db.inv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
-                db.gastosHoy = 0;
+                db.cash = 0; db.card = 0; db.spentToday = 0;
+                db.inventory = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
                 save(); location.reload();
             });
         }
 
-        // --- PROMOS ---
-        function crearBotonPromo() {
-            let n = document.getElementById('pNom').value;
-            let p = parseFloat(document.getElementById('pPre').value);
-            if(!n || !p) return;
-            db.promos.push({ nombre: n, precio: p, receta: {...tempReceta} });
-            tempReceta = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
-            save(); renderPromos(); cerrarMod('modalAjustes');
-        }
-
-        function renderPromos() {
-            const grid = document.getElementById('gridPromos');
-            const gest = document.getElementById('listaGestion');
-            grid.innerHTML = ""; gest.innerHTML = "";
-            db.promos.forEach((p, idx) => {
-                grid.innerHTML += `<button onclick='addCar("${p.nombre}", ${p.precio}, ${JSON.stringify(p.receta)})' class="apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600"><span class="font-black text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${p.precio}</b></button>`;
-                gest.innerHTML += `<div class="flex justify-between p-3 bg-gray-50 rounded-xl"><span>${p.nombre}</span><button onclick="borrarPromo(${idx})" class="text-red-500">×</button></div>`;
+        function save() { localStorage.setItem('ice_v94', JSON.stringify(db)); }
+        function renderGestion() {
+            const box = document.getElementById('boxGestion'); box.innerHTML = "";
+            db.promos.forEach((p, i) => {
+                box.innerHTML += `<div class="flex justify-between p-3 bg-gray-50 rounded-xl mb-1 text-xs"><span>${p.nombre}</span><button onclick="db.promos.splice(${i},1);save();renderPromos();renderGestion();" class="text-red-500">×</button></div>`;
             });
         }
-
-        function borrarPromo(i) { db.promos.splice(i,1); save(); renderPromos(); }
-
-        function renderCounters() {
-            const div = document.getElementById('contadoresPromo');
-            div.innerHTML = "";
-            items.forEach(t => {
-                div.innerHTML += `
-                    <div class="bg-white p-2 rounded-xl shadow-sm border border-blue-50 text-center">
-                        <div class="text-[8px] font-black">${t}</div>
-                        <div class="flex justify-center items-center gap-1">
-                            <button onclick="tempReceta['${t}']=Math.max(0,tempReceta['${t}']-1);document.getElementById('r${t}').innerText=tempReceta['${t}']">-</button>
-                            <span id="r${t}" class="text-xs font-black">0</span>
-                            <button onclick="tempReceta['${t}']++;document.getElementById('r${t}').innerText=tempReceta['${t}']">+</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        // --- AUX ---
-        function abrirMod(id) { 
-            document.getElementById(id).classList.remove('hidden'); 
-            if(id === 'modalAjustes') { renderCounters(); renderPromos(); }
-        }
-        function cerrarMod(id) { document.getElementById(id).classList.add('hidden'); }
-        function save() { localStorage.setItem('ice_v93', JSON.stringify(db)); }
 
         renderPromos();
     </script>
