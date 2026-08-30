@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Heladería POS Pro v9.5</title>
+    <title>Heladería POS Pro v9.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background-color: #f2f2f7; user-select: none; -webkit-tap-highlight-color: transparent; }
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- PRODUCTOS FIJOS -->
+        <!-- PRODUCTOS -->
         <div class="grid grid-cols-2 gap-3 mb-4">
             <button onclick="addCar('V8', 60)" class="apple-card p-4 btn-press text-left border-l-8 border-blue-400">
                 <div class="text-[9px] font-black text-blue-400 uppercase">Vainilla 8oz</div>
@@ -71,16 +71,53 @@
             </button>
         </div>
 
-        <!-- PROMOS DINÁMICAS -->
         <div id="boxPromos" class="grid grid-cols-1 gap-3 mb-24"></div>
         
         <button onclick="abrirResumenFinal()" class="fixed bottom-6 left-6 right-6 bg-blue-600 text-white py-5 rounded-[22px] font-black shadow-2xl btn-press uppercase z-40">Ver Resumen Hoy</button>
     </div>
 
+    <!-- MODAL GASTOS CON LISTA COMPLETA -->
+    <div id="mGasto" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl flex flex-col max-h-[85vh]">
+            <h3 class="text-2xl font-black mb-4 text-center">Registrar Gasto</h3>
+            <div class="space-y-4 overflow-y-auto pr-2 scroll-beauty">
+                <input id="gP" type="text" placeholder="Proveedor" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
+                <select id="gI" onchange="sugerirPrecioGasto()" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
+                    <option value="">¿Qué compraste?</option>
+                    <optgroup label="Ingredientes">
+                        <option value="Leche" data-p="279">Leche (12kg)</option>
+                        <option value="Huevo" data-p="65">Huevo (30 pzs)</option>
+                        <option value="Crema Entera" data-p="75.85">Crema Entera (900g)</option>
+                        <option value="Vainilla" data-p="319">Vainilla (500ml)</option>
+                        <option value="Azúcar" data-p="69">Azúcar (2kg)</option>
+                        <option value="Cocoa" data-p="279">Cocoa (1kg)</option>
+                        <option value="Café" data-p="75">Café (60g)</option>
+                        <option value="Sal" data-p="10">Sal</option>
+                    </optgroup>
+                    <optgroup label="Desechables">
+                        <option value="Desechable 1/2 L" data-p="34">Desechable 1/2 L (25p)</option>
+                        <option value="Tapa Termica" data-p="72">Tapa Térmica (50p)</option>
+                        <option value="Desechable 1 L" data-p="33">Desechable 1 L (15p)</option>
+                        <option value="Vaso 8 oz" data-p="16">Vaso 8 oz (25p)</option>
+                        <option value="Tapa 8 oz" data-p="29">Tapa 8 oz (50p)</option>
+                        <option value="Vaso 4 oz" data-p="14">Vaso 4 oz (25p)</option>
+                    </optgroup>
+                    <option value="Otros" data-p="0">Otros...</option>
+                </select>
+                <div class="grid grid-cols-2 gap-3">
+                    <input id="gCan" type="number" value="1" oninput="sugerirPrecioGasto()" class="p-4 bg-gray-50 rounded-2xl font-bold text-center border-0">
+                    <input id="gM" type="number" step="0.01" placeholder="Monto $" class="w-full p-4 bg-yellow-50 rounded-2xl font-black text-blue-600 border-0 text-center">
+                </div>
+                <button onclick="runGasto()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press shadow-lg">Guardar Gasto</button>
+            </div>
+            <button onclick="ocultarMod('mGasto')" class="w-full text-gray-300 font-bold text-[10px] mt-4">Cerrar</button>
+        </div>
+    </div>
+
     <!-- MODAL VENTA LIBRE -->
     <div id="mLibre" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl flex flex-col max-h-[90vh]">
-            <h3 class="text-2xl font-black mb-4 text-center">Monto Especial</h3>
+            <h3 class="text-2xl font-black mb-4 text-center text-blue-600">Venta Improvisada</h3>
             <div id="boxLibreInv" class="flex-1 overflow-y-auto space-y-2 mb-4 scroll-beauty"></div>
             <input id="inpLibrePrecio" type="number" placeholder="Precio $" class="w-full p-5 bg-blue-50 text-blue-600 font-black rounded-2xl border-0 text-center text-3xl mb-4">
             <button onclick="confirmarLibre()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press">Confirmar</button>
@@ -88,86 +125,12 @@
         </div>
     </div>
 
-    <!-- MODAL GASTOS -->
-    <div id="mGasto" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[35px] p-8 shadow-2xl">
-            <h3 class="text-2xl font-black mb-4 text-center">Registrar Gasto</h3>
-            <div class="space-y-4">
-                <input id="gP" type="text" placeholder="Proveedor" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
-                <select id="gI" onchange="sugerirPrecioGasto()" class="w-full p-4 bg-gray-50 rounded-2xl font-bold border-0">
-                    <option value="">¿Qué compraste?</option>
-                    <option value="Leche" data-p="279">Leche (12kg)</option>
-                    <option value="Huevo" data-p="65">Huevo (30 pzs)</option>
-                    <option value="Crema" data-p="75.85">Crema (900g)</option>
-                    <option value="Vainilla" data-p="319">Vainilla (500ml)</option>
-                    <option value="Azúcar" data-p="69">Azúcar (2kg)</option>
-                    <option value="Otros" data-p="0">Otros...</option>
-                </select>
-                <input id="gM" type="number" placeholder="Monto $" class="w-full p-4 bg-yellow-50 rounded-2xl font-black text-blue-600 border-0 text-center text-2xl">
-                <button onclick="runGasto()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black btn-press">Guardar Gasto</button>
-                <button onclick="ocultarMod('mGasto')" class="w-full text-gray-300 font-bold text-[10px] mt-2">Cerrar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL BITACORA -->
-    <div id="mBitacora" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl">
-            <h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3>
-            <div id="boxBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div>
-            <button onclick="ocultarMod('mBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button>
-        </div>
-    </div>
-
-    <!-- MODAL HISTORIAL DIAS -->
-    <div id="mHistorial" class="fixed inset-0 modal-bg hidden items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl">
-            <h3 class="text-2xl font-black mb-6 tracking-tight">Días Pasados</h3>
-            <div id="boxHistorial" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div>
-            <button onclick="ocultarMod('mHistorial')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button>
-        </div>
-    </div>
-
-    <!-- MODAL AJUSTES -->
-    <div id="mAjuste" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty text-center">
-            <h3 class="text-2xl font-black mb-6">Ajustes</h3>
-            <div class="bg-blue-50 p-5 rounded-[25px] mb-4 text-center">
-                <input id="pName" type="text" placeholder="Nombre Promo" class="w-full p-4 rounded-xl mb-2 font-bold border-0">
-                <input id="pPrice" type="number" placeholder="Precio $" class="w-full p-4 rounded-xl mb-4 font-bold border-0">
-                <div id="boxReceta" class="grid grid-cols-3 gap-2 mb-6"></div>
-                <button onclick="runCrearPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">Crear Botón</button>
-            </div>
-            <div id="boxGestion" class="space-y-2"></div>
-            <button onclick="ocultarMod('mAjuste')" class="w-full text-gray-300 font-bold text-xs mt-4">Cerrar</button>
-        </div>
-    </div>
-
-    <!-- MODAL PAGO -->
-    <div id="mPago" class="fixed inset-0 modal-bg hidden flex items-end justify-center">
-        <div class="bg-white w-full max-w-md rounded-t-[40px] p-10">
-            <h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3>
-            <div class="space-y-4">
-                <button onclick="runPago('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl px-12 text-left">💵 Efectivo</button>
-                <button onclick="runPago('Terminal')" class="w-full py-6 bg-blue-50 rounded-2xl font-black text-xl px-12 text-left text-blue-600">💳 Terminal</button>
-                <button onclick="runPago('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl px-12 text-left">🏦 Transferencia</button>
-                <button onclick="ocultarMod('mPago')" class="w-full py-4 text-red-500 font-bold">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL RESUMEN -->
-    <div id="mResumen" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-[35px] p-8 text-center">
-            <div id="boxResData" class="py-6"></div>
-            <div class="flex justify-between gap-4 mb-6">
-                <button onclick="cambiarPagina(-1)" class="bg-gray-100 p-4 rounded-full font-black">←</button>
-                <button onclick="cambiarPagina(1)" class="bg-gray-100 p-4 rounded-full font-black">→</button>
-            </div>
-            <button onclick="runCierreCaja()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black mb-4">Cerrar Caja y Guardar</button>
-            <button onclick="ocultarMod('mResumen')" class="text-gray-300 font-bold text-xs">Cerrar</button>
-        </div>
-    </div>
+    <!-- OTROS MODALES -->
+    <div id="mBitacora" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[80vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-4">Ventas de Hoy</h3><div id="boxBitacora" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="ocultarMod('mBitacora')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
+    <div id="mHistorial" class="fixed inset-0 modal-bg hidden items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 h-[70vh] flex flex-col shadow-2xl"><h3 class="text-2xl font-black mb-6">Días Pasados</h3><div id="boxHistorial" class="flex-1 overflow-y-auto space-y-3 scroll-beauty"></div><button onclick="ocultarMod('mHistorial')" class="w-full bg-gray-100 py-4 rounded-2xl font-black mt-4">Cerrar</button></div></div>
+    <div id="mAjuste" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-[30px] p-8 max-h-[85vh] overflow-y-auto shadow-2xl scroll-beauty"><h3 class="text-2xl font-black mb-6">Ajustes</h3><div class="bg-blue-50 p-5 rounded-[25px] mb-4 text-center"><input id="pName" type="text" placeholder="Nombre Promo" class="w-full p-4 rounded-xl mb-2 font-bold border-0 shadow-sm"><input id="pPrice" type="number" placeholder="Precio $" class="w-full p-4 rounded-xl mb-4 font-bold border-0 shadow-sm"><div id="boxReceta" class="grid grid-cols-3 gap-2 mb-6"></div><button onclick="runCrearPromo()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black">Crear Botón</button></div><div id="boxGestion" class="space-y-2"></div><button onclick="ocultarMod('mAjuste')" class="w-full text-gray-300 font-bold text-xs mt-4">Cerrar</button></div></div>
+    <div id="mPago" class="fixed inset-0 modal-bg hidden flex items-end justify-center"><div class="bg-white w-full max-w-md rounded-t-[40px] p-10"><h3 class="text-2xl font-black mb-8 text-center">Forma de Pago</h3><div class="space-y-4"><button onclick="runPago('Efectivo')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl px-12 text-left">💵 Efectivo</button><button onclick="runPago('Terminal')" class="w-full py-6 bg-blue-50 rounded-2xl font-black text-xl px-12 text-left text-blue-600">💳 Terminal</button><button onclick="runPago('Transferencia')" class="w-full py-6 bg-gray-50 rounded-2xl font-black text-xl px-12 text-left">🏦 Transferencia</button><button onclick="ocultarMod('mPago')" class="w-full py-4 text-red-500 font-bold">Cancelar</button></div></div></div>
+    <div id="mResumen" class="fixed inset-0 modal-bg hidden flex items-center justify-center p-4"><div class="bg-white w-full max-w-sm rounded-[35px] p-8 text-center"><div id="boxResData" class="py-6"></div><div class="flex justify-between gap-4 mb-6"><button onclick="cambiarPagina(-1)" class="bg-gray-100 p-4 rounded-full font-black">←</button><button onclick="cambiarPagina(1)" class="bg-gray-100 p-4 rounded-full font-black">→</button></div><button onclick="runCierreCaja()" class="w-full bg-red-500 text-white py-5 rounded-2xl font-black mb-4">Cerrar Caja y Guardar</button><button onclick="ocultarMod('mResumen')" class="text-gray-300 font-bold text-xs">Cerrar</button></div></div>
 
     <script>
         const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxC1dHG4fBNlMHzQXhpK8JHQNKtcVnSM4E91-yupBukv7sNqXE0N3hzYSEU8LE7s0mpVA/exec";
@@ -183,148 +146,53 @@
             inv: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
             promoInv: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
             termInv: { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 },
-            bitacora: [],
-            promos: [],
-            spentToday: 0,
-            gastosList: [],
-            reportesPasados: []
+            bitacora: [], promos: [], spentToday: 0, gastosList: [], reportesPasados: []
         };
 
-        function addCar(tipo, precio, receta = null) {
-            cart.push({ tipo, precio, receta });
-            updateUI();
-        }
-
+        function addCar(tipo, precio, receta = null) { cart.push({ tipo, precio, receta }); updateUI(); }
         function updateUI() {
             let total = cart.reduce((a, b) => a + Number(b.precio), 0);
             document.getElementById('txtTotal').innerText = `$${total.toFixed(2)}`;
             document.getElementById('txtLista').innerText = cart.map(i => i.tipo).join(' + ') || "Caja vacía";
         }
-
         function limpiarUltimo() { cart.pop(); updateUI(); }
-
         function verMod(id) {
             document.getElementById(id).classList.remove('hidden');
             if(id === 'mAjuste') { renderRecetaEdit(); renderGestionPromos(); }
         }
         function ocultarMod(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // --- GESTIÓN DE PROMOS ---
-        function renderRecetaEdit() {
-            const box = document.getElementById('boxReceta');
-            box.innerHTML = "";
-            invTypes.forEach(t => {
-                box.innerHTML += `<div class="bg-white p-2 rounded-xl shadow-sm border border-blue-50 text-center"><div class="text-[8px] font-black">${t}</div><div class="flex justify-center items-center gap-1"><button onclick="editRecVal('${t}',-1)">-</button><span id="recVal${t}" class="text-xs font-black">0</span><button onclick="editRecVal('${t}',1)">+</button></div></div>`;
-            });
+        // --- GASTOS ---
+        function sugerirPrecioGasto() {
+            const sel = document.getElementById('gI');
+            const p = sel.options[sel.selectedIndex].getAttribute('data-p');
+            const can = document.getElementById('gCan').value;
+            if(p) document.getElementById('gM').value = (p * can).toFixed(2);
         }
-        function editRecVal(t, v) { tempReceta[t] = Math.max(0, tempReceta[t] + v); document.getElementById('recVal'+t).innerText = tempReceta[t]; }
-
-        function runCrearPromo() {
-            let n = document.getElementById('pName').value;
-            let p = parseFloat(document.getElementById('pPrice').value);
-            if(!n || !p) return;
-            db.promos.push({ nombre: n, precio: p, receta: {...tempReceta} });
-            tempReceta = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
-            save(); renderPromosMain(); ocultarMod('mAjuste');
-        }
-
-        function renderPromosMain() {
-            const box = document.getElementById('boxPromos');
-            box.innerHTML = "";
-            db.promos.forEach((p, idx) => {
-                const btn = document.createElement('button');
-                btn.className = "apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600";
-                btn.onclick = () => addCar(p.nombre, p.precio, p.receta);
-                btn.innerHTML = `<span class="font-black text-sm text-gray-700 uppercase">${p.nombre}</span><b class="text-blue-600 text-xl font-black">$${p.precio}</b>`;
-                box.appendChild(btn);
-            });
-        }
-
-        // --- VENTA LIBRE ---
-        function abrirVentaLibre() {
-            tempLibre = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
-            document.getElementById('inpLibrePrecio').value = "";
-            const box = document.getElementById('boxLibreInv');
-            box.innerHTML = "";
-            invTypes.forEach(t => {
-                box.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl"><span class="font-black text-gray-600 text-sm">${t}</span><div class="flex items-center gap-4"><button onclick="editLibreVal('${t}',-1)" class="counter-btn">-</button><span id="libVal${t}" class="font-black text-lg">0</span><button onclick="editLibreVal('${t}',1)" class="counter-btn text-blue-500">+</button></div></div>`;
-            });
-            verMod('mLibre');
-        }
-        function editLibreVal(t, v) { tempLibre[t] = Math.max(0, tempLibre[t] + v); document.getElementById('libVal'+t).innerText = tempLibre[t]; }
-        function confirmarLibre() {
-            let p = parseFloat(document.getElementById('inpLibrePrecio').value);
-            if(!p) return;
-            addCar("Especial", p, {...tempLibre});
-            ocultarMod('mLibre');
-        }
-
-        // --- PAGO Y CIERRE ---
-        function runPago(metodo) {
-            let total = cart.reduce((a, b) => a + Number(b.precio), 0);
-            const fecha = new Date().toLocaleDateString();
-            const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const detalle = cart.map(i => i.tipo).join(',');
-
-            fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion: "VENTA", fecha, hora, monto: total, metodo, detalle }) });
-
-            if(metodo === 'Efectivo') db.dinero.efec += total;
-            else if(metodo === 'Terminal') db.dinero.term += total;
-            else db.dinero.tran += total;
-
-            db.bitacora.push({ hora, monto: total, metodo, detalle });
-            
-            cart.forEach(i => {
-                if(db.inv[i.tipo] !== undefined) {
-                    db.inv[i.tipo]++;
-                    if(metodo === 'Terminal') db.termInv[i.tipo]++;
-                }
-                if(i.receta) { 
-                    for(let k in i.receta) { 
-                        db.inv[k] += i.receta[k]; 
-                        db.promoInv[k] += i.receta[k]; 
-                        if(metodo === 'Terminal') db.termInv[k] += i.receta[k];
-                    } 
-                }
-            });
-
-            save(); cart = []; updateUI(); ocultarMod('mPago'); alert("Cobrado");
-        }
-
         function runGasto() {
             let p = document.getElementById('gP').value || "S/P";
             let i = document.getElementById('gI').value;
             let m = parseFloat(document.getElementById('gM').value);
             if(!i || !m) return;
             const fecha = new Date().toLocaleDateString();
-            const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
             fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion: "GASTO", fecha, proveedor: p, metodo: "Efectivo", concepto: i, monto: m, pagado: "SI" }) });
-
-            db.spentToday += m;
-            db.gastosList.push({ hora, p, i, m });
-            save(); 
-            document.getElementById('gI').value = ""; document.getElementById('gM').value = "";
-            ocultarMod('mGasto'); alert("Gasto Guardado");
+            db.spentToday += m; db.gastosList.push({ hora: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), p, i, m });
+            save(); ocultarMod('mGasto'); alert("Gasto Guardado");
         }
 
-        function abrirResumenFinal() {
-            pagRes = 0; renderResumen(); verMod('mResumen');
-        }
-        function cambiarPagina(d) { pagRes = Math.max(0, Math.min(4, pagRes + d)); renderResumen(); }
-        
-        function renderResumen() {
-            const box = document.getElementById('boxResData');
-            let bruto = db.dinero.efec + db.dinero.term + db.dinero.tran;
-            let comision = db.dinero.term * 0.04176;
-            let apartado = bruto * 0.5;
-            let neto = bruto - comision - apartado - db.spentToday;
-
-            if(pagRes === 0) box.innerHTML = `<h4 class="text-blue-500 font-bold uppercase text-[10px] mb-4">Inventario</h4><div class="grid grid-cols-2 gap-2">` + Object.entries(db.inv).map(([k,v])=>`<div class="bg-gray-50 p-2 rounded-xl text-xs font-bold">${k}: ${v}</div>`).join('') + `</div>`;
-            else if(pagRes === 1) box.innerHTML = `<h4 class="text-purple-500 font-bold uppercase text-[10px] mb-4">Promos</h4><div class="grid grid-cols-2 gap-2">` + Object.entries(db.promoInv).map(([k,v])=>`<div class="bg-gray-50 p-2 rounded-xl text-xs font-bold">P-${k}: ${v}</div>`).join('') + `</div>`;
-            else if(pagRes === 2) box.innerHTML = `<h4 class="text-red-500 font-bold uppercase text-[10px] mb-4">Gastos</h4><div class="space-y-2">` + db.gastosList.map(g=>`<div class="flex justify-between text-[10px] bg-red-50 p-2 rounded-lg font-bold"><span>${g.i}</span><span>$${g.m.toFixed(2)}</span></div>`).join('') + `<div class="pt-2 font-black text-lg text-red-600">Total: $${db.spentToday.toFixed(2)}</div></div>`;
-            else if(pagRes === 3) box.innerHTML = `<h4 class="text-green-500 font-bold uppercase text-[10px] mb-4">Caja Bruta</h4><div class="space-y-3 text-left"><div class="flex justify-between border-b pb-1 font-bold"><span>Efectivo:</span> <span>$${db.dinero.efec.toFixed(2)}</span></div><div class="flex justify-between border-b pb-1 font-bold"><span>Tarjeta:</span> <span>$${db.dinero.term.toFixed(2)}</span></div><div class="flex justify-between font-bold text-gray-400"><span>Transf:</span> <span>$${db.dinero.tran.toFixed(2)}</span></div><div class="pt-4 text-2xl font-black text-center text-blue-600">$${bruto.toFixed(2)}</div></div>`;
-            else box.innerHTML = `<h4 class="text-orange-500 font-bold uppercase text-[10px] mb-4">Cierre Neto</h4><div class="space-y-2 text-left font-bold text-xs"><div class="flex justify-between"><span>Apartado 50%:</span> <span class="text-orange-500">-$${apartado.toFixed(2)}</span></div><div class="flex justify-between"><span>Comisión:</span> <span class="text-red-400">-$${comision.toFixed(2)}</span></div><div class="flex justify-between"><span>Gastos:</span> <span class="text-red-600">-$${db.spentToday.toFixed(2)}</span></div><div class="pt-4 text-3xl font-black text-center text-green-600 mt-2">NETO: $${neto.toFixed(2)}</div></div>`;
+        // --- VENTAS Y CIERRE ---
+        function runPago(metodo) {
+            let total = cart.reduce((a, b) => a + Number(b.precio), 0);
+            const fecha = new Date().toLocaleDateString();
+            const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion: "VENTA", fecha, hora, monto: total, metodo, detalle: cart.map(i => i.tipo).join(',') }) });
+            if(metodo === 'Efectivo') db.dinero.efec += total; else if(metodo === 'Terminal') db.dinero.term += total; else db.dinero.tran += total;
+            db.bitacora.push({ hora, monto: total, metodo, detalle: cart.map(i => i.tipo).join(',') });
+            cart.forEach(i => {
+                if(db.inv[i.tipo] !== undefined) { db.inv[i.tipo]++; if(metodo === 'Terminal') db.termInv[i.tipo]++; }
+                if(i.receta) { for(let k in i.receta) { db.inv[k] += i.receta[k]; db.promoInv[k] += i.receta[k]; if(metodo === 'Terminal') db.termInv[k] += i.receta[k]; } }
+            });
+            save(); cart = []; updateUI(); ocultarMod('mPago'); alert("Cobrado");
         }
 
         function runCierreCaja() {
@@ -332,54 +200,71 @@
             let bruto = db.dinero.efec + db.dinero.term + db.dinero.tran;
             let neto = (bruto * 0.5) - (db.dinero.term * 0.04176) - db.spentToday;
             const hoy = new Date().toLocaleDateString();
-
-            fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({
-                tipoAccion: "CIERRE", fecha: hoy,
-                efectivo: db.dinero.efec, terminal: db.dinero.term, transf: db.dinero.tran,
-                gastos: db.spentToday, neto: neto
-            })}).then(() => {
+            fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ tipoAccion: "CIERRE", fecha: hoy, efectivo: db.dinero.efec, terminal: db.dinero.term, transf: db.dinero.tran, gastos: db.spentToday, neto: neto }) }).then(() => {
                 db.reportesPasados.push({ fecha: hoy, total: neto, helados: Object.values(db.inv).reduce((a,b)=>a+b,0) });
-                db.dinero = { efec:0, term:0, tran:0 };
-                db.inv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
-                db.promoInv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
-                db.termInv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
-                db.bitacora = []; db.spentToday = 0; db.gastosList = [];
-                save(); location.reload();
+                db.dinero = { efec:0, term:0, tran:0 }; db.inv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
+                db.promoInv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 }; db.termInv = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 };
+                db.bitacora = []; db.spentToday = 0; db.gastosList = []; save(); location.reload();
             });
         }
 
-        // --- HISTORIAL Y BITACORA ---
+        // --- FUNCIONES EXTRA ---
+        function abrirVentaLibre() {
+            tempLibre = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 }; document.getElementById('inpLibrePrecio').value = "";
+            const box = document.getElementById('boxLibreInv'); box.innerHTML = "";
+            invTypes.forEach(t => { box.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl mb-1"><span class="font-black text-xs uppercase text-gray-500">${t}</span><div class="flex items-center gap-4"><button onclick="editLibVal('${t}',-1)" class="counter-btn">-</button><span id="libVal${t}" class="font-black">0</span><button onclick="editLibVal('${t}',1)" class="counter-btn text-blue-500">+</button></div></div>`; });
+            verMod('mLibre');
+        }
+        function editLibVal(t, v) { tempLibre[t] = Math.max(0, tempLibre[t] + v); document.getElementById('libVal'+t).innerText = tempLibre[t]; }
+        function confirmarLibre() { let p = parseFloat(document.getElementById('inpLibrePrecio').value); if(p) addCar("Libre", p, {...tempLibre}); ocultarMod('mLibre'); }
+        
+        function abrirResumenFinal() { pagRes = 0; renderResumen(); verMod('mResumen'); }
+        function cambiarPagina(d) { pagRes = Math.max(0, Math.min(4, pagRes + d)); renderResumen(); }
+        function renderResumen() {
+            const box = document.getElementById('boxResData');
+            let bruto = db.dinero.efec + db.dinero.term + db.dinero.tran;
+            let comision = db.dinero.term * 0.04176; let apartado = bruto * 0.5; let neto = bruto - comision - apartado - db.spentToday;
+            if(pagRes === 0) box.innerHTML = `<h4 class="text-blue-500 font-bold uppercase text-[10px] mb-4 italic">Ventas Totales</h4><div class="grid grid-cols-2 gap-2">` + Object.entries(db.inv).map(([k,v])=>`<div class="bg-gray-50 p-2 rounded-xl text-xs font-bold">${k}: ${v}</div>`).join('') + `</div>`;
+            else if(pagRes === 1) box.innerHTML = `<h4 class="text-purple-500 font-bold uppercase text-[10px] mb-4 italic">Promos Descontadas</h4><div class="grid grid-cols-2 gap-2">` + Object.entries(db.promoInv).map(([k,v])=>`<div class="bg-gray-50 p-2 rounded-xl text-xs font-bold">P-${k}: ${v}</div>`).join('') + `</div>`;
+            else if(pagRes === 2) box.innerHTML = `<h4 class="text-red-500 font-bold uppercase text-[10px] mb-4 italic">Gastos Hoy</h4><div class="space-y-1">` + db.gastosList.map(g=>`<div class="flex justify-between text-[9px] bg-red-50 p-2 rounded font-bold"><span>${g.i}</span><span>$${g.m.toFixed(2)}</span></div>`).join('') + `<div class="pt-2 font-black text-lg text-red-600">Total: $${db.spentToday.toFixed(2)}</div></div>`;
+            else if(pagRes === 3) box.innerHTML = `<h4 class="text-green-500 font-bold uppercase text-[10px] mb-4 italic">Caja Bruta</h4><div class="space-y-3 text-left font-bold text-xs"><div class="flex justify-between"><span>Efectivo:</span> <span>$${db.dinero.efec.toFixed(2)}</span></div><div class="flex justify-between"><span>Tarjeta:</span> <span>$${db.dinero.term.toFixed(2)}</span></div><div class="pt-4 text-2xl font-black text-center text-blue-600 w-full">$${bruto.toFixed(2)}</div></div>`;
+            else box.innerHTML = `<h4 class="text-orange-500 font-bold uppercase text-[10px] mb-4 italic">Cierre Neto</h4><div class="space-y-2 text-left font-bold text-[11px]"><div class="flex justify-between"><span>Apartado 50%:</span> <span class="text-orange-500">-$${apartado.toFixed(2)}</span></div><div class="flex justify-between"><span>Gastos:</span> <span class="text-red-600">-$${db.spentToday.toFixed(2)}</span></div><div class="pt-4 text-3xl font-black text-center text-green-600 w-full mt-2">NETO: $${neto.toFixed(2)}</div></div>`;
+        }
+
         function abrirBitacora() {
-            const box = document.getElementById('boxBitacora');
-            box.innerHTML = "";
-            [...db.bitacora].reverse().forEach(v => {
-                box.innerHTML += `<div class="apple-card p-4 border-l-8 border-blue-500 flex justify-between items-center"><div class="text-left"><span class="text-[10px] font-black text-blue-400 uppercase">${v.hora} - ${v.metodo}</span><div class="font-black text-lg">$${v.monto.toFixed(2)}</div><div class="text-[9px] text-gray-400 font-bold">${v.detalle}</div></div></div>`;
-            });
+            const box = document.getElementById('boxBitacora'); box.innerHTML = "";
+            [...db.bitacora].reverse().forEach(v => { box.innerHTML += `<div class="apple-card p-4 border-l-8 border-blue-500 flex justify-between items-center mb-1"><div class="text-left"><span class="text-[9px] font-black text-blue-400 uppercase">${v.hora} | ${v.metodo}</span><div class="font-black text-lg">$${v.monto.toFixed(2)}</div><div class="text-[9px] text-gray-400 font-bold">${v.detalle}</div></div></div>`; });
             verMod('mBitacora');
         }
         function abrirHistorial() {
-            const box = document.getElementById('boxHistorial');
-            box.innerHTML = "";
-            [...db.reportesPasados].reverse().forEach(r => {
-                box.innerHTML += `<div class="bg-gray-100 p-4 rounded-2xl flex justify-between items-center mb-1"><div class="text-left font-black"><div class="text-xs text-gray-400">${r.fecha}</div><div class="text-blue-600 text-lg">$${r.total.toFixed(2)}</div></div><div class="text-[10px] font-black uppercase text-gray-300">Hels: ${r.helados}</div></div>`;
-            });
+            const box = document.getElementById('boxHistorial'); box.innerHTML = "";
+            [...db.reportesPasados].reverse().forEach(r => { box.innerHTML += `<div class="bg-gray-100 p-4 rounded-2xl flex justify-between items-center mb-1"><div class="text-left font-black"><div class="text-xs text-gray-400">${r.fecha}</div><div class="text-blue-600 text-lg">$${r.total.toFixed(2)}</div></div><div class="text-[9px] font-black text-gray-300">HELS: ${r.helados}</div></div>`; });
             verMod('mHistorial');
         }
 
-        // --- AUXILIARES ---
-        function sugerirPrecioGasto() {
-            const sel = document.getElementById('gI');
-            const p = sel.options[sel.selectedIndex].getAttribute('data-p');
-            if(p) document.getElementById('gM').value = p;
+        // --- PROMOS ---
+        function renderRecetaEdit() {
+            const box = document.getElementById('boxReceta'); box.innerHTML = "";
+            invTypes.forEach(t => { box.innerHTML += `<div class="bg-white p-2 rounded-xl border border-blue-50 text-center"><div class="text-[8px] font-black">${t}</div><div class="flex justify-center items-center gap-1"><button onclick="editRecVal('${t}',-1)">-</button><span id="recVal${t}" class="text-xs font-black">0</span><button onclick="editRecVal('${t}',1)">+</button></div></div>`; });
         }
-        function save() { localStorage.setItem('ice_v95_final', JSON.stringify(db)); }
-        function renderGestionPromos() {
-            const box = document.getElementById('boxGestion'); box.innerHTML = "";
-            db.promos.forEach((p, i) => {
-                box.innerHTML += `<div class="flex justify-between p-3 bg-gray-50 rounded-xl mb-1 text-xs font-bold"><span>${p.nombre}</span><button onclick="db.promos.splice(${i},1);save();renderPromosMain();renderGestionPromos();" class="text-red-500">×</button></div>`;
+        function editRecVal(t, v) { tempReceta[t] = Math.max(0, tempReceta[t] + v); document.getElementById('recVal'+t).innerText = tempReceta[t]; }
+        function runCrearPromo() {
+            let n = document.getElementById('pName').value, p = parseFloat(document.getElementById('pPrice').value);
+            if(n && p) { db.promos.push({ nombre: n, precio: p, receta: {...tempReceta} }); tempReceta = { V8:0, C8:0, V16:0, C16:0, V32:0, C32:0 }; save(); renderPromosMain(); ocultarMod('mAjuste'); }
+        }
+        function renderPromosMain() {
+            const box = document.getElementById('boxPromos'); box.innerHTML = "";
+            db.promos.forEach(p => { 
+                const btn = document.createElement('button'); btn.className = "apple-card p-5 flex justify-between items-center btn-press border-l-8 border-blue-600";
+                btn.onclick = () => addCar(p.nombre, p.precio, p.receta); btn.innerHTML = `<span class="font-black text-xs uppercase text-gray-700">${p.nombre}</span><b class="text-blue-600 text-xl">$${p.precio}</b>`; box.appendChild(btn); 
             });
         }
+        function renderGestionPromos() {
+            const box = document.getElementById('boxGestion'); box.innerHTML = "";
+            db.promos.forEach((p, i) => { box.innerHTML += `<div class="flex justify-between p-3 bg-gray-50 rounded-xl mb-1 text-xs font-bold"><span>${p.nombre}</span><button onclick="db.promos.splice(${i},1);save();renderPromosMain();renderGestionPromos();" class="text-red-500">×</button></div>`; });
+        }
 
+        function save() { localStorage.setItem('ice_v95_final', JSON.stringify(db)); }
         renderPromosMain();
     </script>
 </body>
